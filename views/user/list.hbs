@@ -1,0 +1,31 @@
+<h3><a class="btn btn-secondary" href="/user"><i class="fa fa-plus"></i> Create New</a> User List</h3>
+<a class="btn btn-secondary" href="/user/upload"><i class="fa fa-plus"></i> Upload sheet</a>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Age</th>
+            <th>Username</th>
+           
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each list}}
+        <tr>
+            <td>{{this.Name}}</td>
+            <td>{{this.Address}}</td>
+            <td>{{this.Age}}</td>
+            <td>{{this.Username}}</td>
+           
+            <td>
+               
+                <a  href="/user/delete/{{this._id}}" onclick="return confirm('Are you sure to delete this record ?');"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
