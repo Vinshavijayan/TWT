@@ -92,64 +92,31 @@ router.get('/delete/:id', (req, res) => {
 });
 
 
+
+
 global.__basedir = __dirname;
 
 // -> Multer Upload Storage
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, __basedir + '/uploads/')
-    },
+    destination: './uploads',
     filename: (req, file, cb) => {
         cb(null, file.fieldname + "-" + Date.now() + "-" + file.originalname)
     }
 });
-
-const upload = multer({storage: storage});
- 
+const upload = multer({storage: storage}).fields([
+    {
+      name: 'file',
+      maxCount: 1,
+    },
+  ]); 
 // -> Express Upload RestAPIs
-router.post('/uploadsheet', upload.single("uploadsheet"), (req, res) =>{
-    importExcelData2MongoDB(__basedir + '/uploads/' + req.body.filename);
-    res.json({
-        'msg': 'File uploaded/import successfully!', 'file': req.file
-    });
+router.post('/uploadsheet', upload, (req, res) =>{
+    console.log("out",req.files);
+    res.sendStatus(200)
+   
 });
 
-// -> Import Excel File to MongoDB database
-function importExcelData2MongoDB(filePath){
-    // -> Read Excel File to Json Data
-    const excelData = excelToJson({
-        sourceFile: filePath,
-        sheets:[{
-            // Excel Sheet Name
-            name: 'Users',
- 
-            // Header Row -> be skipped and will not be present at our result object.
-            header:{
-               rows: 1
-            },
-			
-            // Mapping columns to keys
-            columnToKey: {
-                A: 'Name',
-                B: 'Address',
-                C: 'Age',
-                D: 'Username'
-            }
-        }]
-    });
 
-    // Insert Json-Object to MongoDB
-   
-        User.insertMany(excelData.Users, (err, res) => {
-            if (err) throw err;
-            console.log("Number of documents inserted: " + res.insertedCount);
-        
-        });
-    
-			
-    fs.unlinkSync(filePath);
-
-    }
 
     router.get('/upload',(req,res)=>{
         res.render('user/upload');
